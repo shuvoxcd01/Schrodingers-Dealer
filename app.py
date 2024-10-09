@@ -44,7 +44,7 @@ def get_data():
     global OBSERVATIONS, ACTIONS, REWARDS, CURRENT_EPISODE
 
     if not OBSERVATIONS:
-        num_iter = 1000
+        num_iter = 1
         OBSERVATIONS, ACTIONS, REWARDS = agent.run_policy_iteration(num_iter=num_iter)
         CURRENT_EPISODE += num_iter
 
