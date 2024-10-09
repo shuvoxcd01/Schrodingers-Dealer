@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 from collections import defaultdict
-
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 from matplotlib.patches import Patch
+
 
 
 def create_grids(agent, usable_ace=False):
@@ -41,7 +43,7 @@ def create_grids(agent, usable_ace=False):
     return value_grid, policy_grid
 
 
-def create_plots(value_grid, policy_grid, title: str):
+def create_plots(value_grid, policy_grid, title: str, figure_name:str):
     """Creates a plot using a value and policy grid."""
     # create a new figure with 2 subplots (left: state values, right: policy)
     player_count, dealer_count, value = value_grid
@@ -83,4 +85,8 @@ def create_plots(value_grid, policy_grid, title: str):
         Patch(facecolor="grey", edgecolor="black", label="Stick"),
     ]
     ax2.legend(handles=legend_elements, bbox_to_anchor=(1.3, 1))
-    return fig
+
+    
+    fig.savefig(f"static/images/{figure_name}.png", format="png")
+
+    plt.close(fig)

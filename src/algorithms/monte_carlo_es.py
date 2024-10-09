@@ -8,7 +8,6 @@ from src.algorithms.base_learning_algorithm import BaseLearningAlgorithm
 from src.algorithms.trajectory import Trajectory
 
 
-
 class MonteCarloES(BaseLearningAlgorithm):
     def __init__(self, env: Env, n_iter: int = 1000) -> None:
         self.env = env
@@ -20,15 +19,18 @@ class MonteCarloES(BaseLearningAlgorithm):
 
         self.policy_name = "MCES"
 
-    
     def get_policy(self):
         return lambda state: self.policy[state]
-    
-    def run_policy_iteration(self):
+
+    def run_policy_iteration(self, num_iter):
+        all_obs = []
+        all_actions = []
+        all_rewards = []
+
         trajectory = Trajectory()
         returns = defaultdict(list)
 
-        for _ in tqdm(range(self.n_iter)):
+        for i in tqdm(range(num_iter)):
             trajectory.clear()
             obs, info = self.env.reset()
             action = random.choice(self.actions)
@@ -36,6 +38,10 @@ class MonteCarloES(BaseLearningAlgorithm):
 
             while not done:
                 next_obs, reward, terminated, truncated, info = self.env.step(action)
+                if i == num_iter - 1:
+                    all_obs.append(obs)
+                    all_actions.append(action)
+                    all_rewards.append(reward)
                 trajectory.record_step(state=obs, action=action, reward=reward)
                 done = terminated or truncated
                 obs = next_obs
@@ -56,3 +62,4 @@ class MonteCarloES(BaseLearningAlgorithm):
                     self.q_values[state][action] = q_value
                     self.policy[state] = np.argmax(self.q_values[state])
 
+        return all_obs, all_actions, all_rewards
